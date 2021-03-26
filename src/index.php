@@ -75,10 +75,10 @@ echo '<strong><hr>' . 'Question n° 5: ' . '</strong><br><br>'. $results['email'
 
 // ex 6
 try {
-    $results = $db->prepare("SELECT productCode, productline productScale, productName
+    $results = $db->prepare("SELECT productCode, productline, productScale, productName
                             FROM products 
                             WHERE productLine = 'Trucks and Buses'
-                            ORDER BY productScale, productname");
+                            ORDER BY productScale, productName");
     $results->execute();
 } catch (Exception $error) {
     echo $error->getMessage();
@@ -215,4 +215,246 @@ try {
 
 $results = $results->fetch();
 echo '<strong><hr>' . 'Question n° 15: ' . '</strong><br><br>'. $results['avg(creditLimit)'] . '<br>';
+
+// ex 16
+try {
+    $results = $db->prepare("SELECT  contactLastName, count(*)
+                            FROM customers
+                            GROUP BY contactLastName DESC ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 16: ' . '</strong><br><br>'. $results['contactLastName'] . '<br>';
+
+// ex 17
+// try {
+//     $results = $db->prepare("SELECT status,
+//                             FROM orders
+//                             GROUP BY status");
+//     $results->execute();
+// } catch (Exception $error) {
+//     echo $error->getMessage();
+//     exit;
+// }
+
+// $results = $results->fetch();
+// echo '<strong><hr>' . 'Question n° 17: ' . '</strong><br><br>'. $results['status'] . '<br>';
+
+// ex 18
+try {
+    $results = $db->prepare("SELECT  country
+                            FROM customers
+                            GROUP BY country ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 18: ' . '</strong><br><br>';
+foreach($results as $key => $result){
+    echo $result.'<br>';
+}
+
+// ex 19
+try {
+    $results = $db->prepare("SELECT  status,count(*)
+                            FROM orders
+                            WHERE status != 'shipped' ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 19: ' . '</strong><br><br>'. $results['count(*)'] . '<br>';
+
+// ex 20
+try {
+    $results = $db->prepare("SELECT count(customerNumber),creditLimit
+                            
+                            FROM customers
+                            JOIN employees
+                            ON salesRepEmployeeNumber = employeeNumber
+                            WHERE lastName = 'Patterson' && firstName = 'Steve' && creditLimit > 100000 ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 20: ' . '</strong><br><br>'. $results['count(customerNumber)'] . '<br>';
+
+// ex 21
+try {
+    $results = $db->prepare("SELECT  status,count(*)
+                            FROM orders
+                            WHERE status = 'shipped' ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 21: ' . '</strong><br><br>'. $results['count(*)'] . '<br>';
+
+// ex 22
+try {
+    $results = $db->prepare("SELECT avg(Moyenne) 'moyGenerale'
+                            FROM (SELECT avg(quantityInStock) 'Moyenne', productLine
+                            FROM products
+                            GROUP BY productLine)avgs  ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 22: ' . '</strong><br><br>'. $results['moyGenerale'] . '<br>';
+
+// ex 23
+try {
+    $results = $db->prepare("SELECT count(productName) 'Nb', quantityInStock 
+                            FROM products 
+                            WHERE quantityInStock < 100 ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 23: ' . '</strong><br><br>'. $results['Nb'] . '<br>';
+
+
+// ex 24
+try {
+    $results = $db->prepare("SELECT count(productName) 'Nb', quantityInStock 
+                            FROM products 
+                            WHERE quantityInStock > 100 and quantityInStock < 500");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 24: ' . '</strong><br><br>'. $results['Nb'] . '<br>';
+
+// ex 25
+try {
+    $results = $db->prepare("SELECT count(*) 'Nb', shippedDate , status
+                            FROM orders
+                            WHERE shippedDate between '2004-06-01' and '2004-09-30' and status='shipped' ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 25: ' . '</strong><br><br>'. $results['Nb'] . '<br>';
+
+// ex 26
+try {
+    $results = $db->prepare("SELECT count(contactLastName)'Nb'
+                            FROM customers
+                            JOIN employees
+                            ON contactLastName = lastName
+                           ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 26: ' . '</strong><br><br>'. $results['Nb'] . '<br>';
+
+// ex 27
+try {
+    $results = $db->prepare("SELECT productCode, max(buyPrice)
+                            FROM products
+                            ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 27: ' . '</strong><br><br>'. $results['productCode'] . '<br>';
+
+// ex 28
+try {
+    $results = $db->prepare("SELECT productCode, sum(MSRP - buyPrice) 'diff'
+                            FROM products
+                            GROUP BY productCode 
+                            ORDER BY diff DESC
+                            ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 28: ' . '</strong><br><br>'. $results['productCode'] . '<br>';
+
+// ex 29
+try {
+    $results = $db->prepare("SELECT productCode, sum(MSRP - buyPrice) 'diff'
+                            FROM products
+                            GROUP BY productCode 
+                            ORDER BY diff DESC
+                            ");
+    $results->execute();
+} catch (Exception $error) {
+    echo $error->getMessage();
+    exit;
+}
+
+$results = $results->fetch();
+echo '<strong><hr>' . 'Question n° 29: ' . '</strong><br><br>'. $results['diff'] . '<br>';
+
+// // ex 30
+// try {
+//     $results = $db->prepare("SELECT productCode, sum(MSRP - buyPrice) 'diff'
+//                             FROM products
+//                             GROUP BY productCode 
+//                             ORDER BY diff DESC
+//                             ");
+//     $results->execute();
+// } catch (Exception $error) {
+//     echo $error->getMessage();
+//     exit;
+// }
+
+// $results = $results->fetch();
+// echo '<strong><hr>' . 'Question n° 30: ' . '</strong><br><br>'. $results['diff'] . '<br>';
+
+// ex 31
+// try {
+//     $results = $db->prepare("SELECT count(productCode), sum(MSRP - buyPrice) 'diff'
+//                             FROM products
+//                             GROUP BY productCode
+//                             HAVING  diff < 30
+//                             ");
+//     $results->execute();
+// } catch (Exception $error) {
+//     echo $error->getMessage();
+//     exit;
+// }
+
+// $results = $results->fetch();
+// echo '<strong><hr>' . 'Question n° 31: ' . '</strong><br><br>'. $results['count(productCode)'] . '<br>';
 ?>
